@@ -25,7 +25,7 @@
         }
         .skins {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
             margin-bottom: 16px;
         }
@@ -34,7 +34,7 @@
             background: #0f3460;
             border: 2px solid #16213e;
             border-radius: 12px;
-            padding: 10px;
+            padding: 8px;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -44,13 +44,16 @@
         }
         .skin-card img {
             width: 100%;
+            height: 80px;
+            object-fit: cover;
             border-radius: 8px;
+            background: #16213e;
         }
         .skin-card p {
             margin: 6px 0 0;
-            font-size: 13px;
+            font-size: 12px;
         }
-        .price { color: #f4d35e; font-size: 12px; }
+        .price { color: #f4d35e; font-size: 11px; }
         input[type=number] {
             width: 100%;
             padding: 12px;
@@ -82,17 +85,17 @@
     <p class="chance-label">Выбери скин для апгрейда:</p>
     <div class="skins">
         <div class="skin-card selected" data-chance="50" data-name="AKR-12 | Дракон">
-            <img src="https://via.placeholder.com/200x120/e94560/ffffff?text=AKR-12" alt="AKR-12">
+            <img src="akr.png" alt="AKR-12">
             <p>AKR-12 | Дракон</p>
             <p class="price">Шанс: 50%</p>
         </div>
         <div class="skin-card" data-chance="20" data-name="M4A1 | Вихрь">
-            <img src="https://via.placeholder.com/200x120/0f3460/ffffff?text=M4A1" alt="M4A1">
+            <img src="m4a1.png" alt="M4A1">
             <p>M4A1 | Вихрь</p>
             <p class="price">Шанс: 20%</p>
         </div>
         <div class="skin-card" data-chance="5" data-name="AWM | Феникс">
-            <img src="https://via.placeholder.com/200x120/f4d35e/000000?text=AWM" alt="AWM">
+            <img src="awm.png" alt="AWM">
             <p>AWM | Феникс</p>
             <p class="price">Шанс: 5%</p>
         </div>
@@ -113,7 +116,6 @@
         let balance = 0;
         let selectedChance = 50;
 
-        // Загрузка данных пользователя
         async function loadUser() {
             try {
                 const res = await fetch(`/api/user/${userId}`);
@@ -126,7 +128,6 @@
             }
         }
 
-        // Выбор скина
         document.querySelectorAll('.skin-card').forEach(card => {
             card.addEventListener('click', () => {
                 document.querySelectorAll('.skin-card').forEach(c => c.classList.remove('selected'));
@@ -135,7 +136,6 @@
             });
         });
 
-        // Апгрейд
         async function doUpgrade() {
             const bet = parseInt(document.getElementById('bet').value);
             const resultEl = document.getElementById('result');
