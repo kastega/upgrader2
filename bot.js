@@ -3,8 +3,8 @@ const { Telegraf, Markup } = require('telegraf');
 // ↓↓↓ ЗАМЕНИ НА НОВЫЙ ТОКЕН ОТ @BotFather ↓↓↓
 const BOT_TOKEN = '5736387230:AAGt-OSdmCceRJUHRLb_y2MdSZ7d8F4G8vE';
 
-// ↓↓↓ ССЫЛКА НА ТВОЙ САЙТ (пока оставим старую, поменяем позже) ↓↓↓
-const WEBAPP_URL = 'https://kastega.github.io/upgrader/';
+// ↓↓↓ ССЫЛКА НА RAILWAY-СЕРВЕР ↓↓↓
+const WEBAPP_URL = 'https://upgrader2-production.up.railway.app';
 
 const bot = new Telegraf(BOT_TOKEN);
 
