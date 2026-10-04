@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, sans-serif;
+            padding: 16px;
+            background: #1a1a2e;
+            color: white;
+            text-align: center;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .balance {
+            font-size: 22px;
+            font-weight: bold;
+            background: #0f3460;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .skins {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .skin-card {
+            flex: 1;
+            background: #0f3460;
+            border: 2px solid #16213e;
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .skin-card.selected {
+            border-color: #e94560;
+            box-shadow: 0 0 16px #e94560;
+        }
+        .skin-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .skin-card p {
+            margin: 6px 0 0;
+            font-size: 13px;
+        }
+        .price { color: #f4d35e; font-size: 12px; }
+        input[type=number] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        button:disabled { opacity: 0.5; }
+        #result { font-size: 18px; margin-top: 12px; min-height: 24px; }
+        .chance-label { margin: 12px 0 6px; font-size: 14px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="balance">💰 Баланс: <span id="balance">...</span></div>
+
+    <p class="chance-label">Выбери скин для апгрейда:</p>
+    <div class="skins">
+        <div class="skin-card selected" data-chance="50" data-name="AKR-12 | Дракон">
+            <img src="https://via.placeholder.com/200x120/e94560/ffffff?text=AKR-12" alt="AKR-12">
+            <p>AKR-12 | Дракон</p>
+            <p class="price">Шанс: 50%</p>
+        </div>
+        <div class="skin-card" data-chance="20" data-name="M4A1 | Вихрь">
+            <img src="https://via.placeholder.com/200x120/0f3460/ffffff?text=M4A1" alt="M4A1">
+            <p>M4A1 | Вихрь</p>
+            <p class="price">Шанс: 20%</p>
+        </div>
+        <div class="skin-card" data-chance="5" data-name="AWM | Феникс">
+            <img src="https://via.placeholder.com/200x120/f4d35e/000000?text=AWM" alt="AWM">
+            <p>AWM | Феникс</p>
+            <p class="price">Шанс: 5%</p>
+        </div>
+    </div>
+
+    <p class="chance-label">Ставка:</p>
+    <input type="number" id="bet" value="100" min="10" step="10">
+
+    <button id="upgradeBtn" onclick="doUpgrade()">🚀 Апгрейд</button>
+    <div id="result"></div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        const userId = tg.initDataUnsafe?.user?.id || 'test_user';
+        let balance = 0;
+        let selectedChance = 50;
+
+        // Загрузка данных пользователя
+        async function loadUser() {
+            try {
+                const res = await fetch(`/api/user/${userId}`);
+                const data = await res.json();
+                balance = data.balance;
+                document.getElementById('balance').textContent = balance;
+            } catch (e) {
+                console.error('Ошибка загрузки:', e);
+                document.getElementById('balance').textContent = 'ошибка';
+            }
+        }
+
+        // Выбор скина
+        document.querySelectorAll('.skin-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.skin-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedChance = parseInt(card.dataset.chance);
+            });
+        });
+
+        // Апгрейд
+        async function doUpgrade() {
+            const bet = parseInt(document.getElementById('bet').value);
+            const resultEl = document.getElementById('result');
+            const btn = document.getElementById('upgradeBtn');
+
+            if (bet < 10) {
+                resultEl.innerHTML = '⚠️ Минимальная ставка 10';
+                return;
+            }
+            if (bet > balance) {
+                resultEl.innerHTML = '⚠️ Недостаточно монет';
+                return;
+            }
+
+            btn.disabled = true;
+            resultEl.innerHTML = '🎲 Крутим...';
+
+            try {
+                const res = await fetch('/api/upgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, bet, chance: selectedChance })
+                });
+                const data = await res.json();
+
+                if (data.error) {
+                    resultEl.innerHTML = '⚠️ ' + data.error;
+                } else if (data.win) {
+                    resultEl.innerHTML = `🎉 УСПЕХ! +${data.winAmount} монет`;
+                } else {
+                    resultEl.innerHTML = `💀 ПРОВАЛ... −${bet} монет`;
+                }
+
+                balance = data.newBalance;
+                document.getElementById('balance').textContent = balance;
+            } catch (e) {
+                resultEl.innerHTML = '⚠️ Ошибка соединения';
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        loadUser();
+    </script>
+</body>
+</html>
