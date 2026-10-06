@@ -81,14 +81,12 @@ app.post('/api/upgrade', (req, res) => {
 
     const win = Math.random() < chance;
 
-    // Обновляем инвентарь
     let newInventory = inventory.filter(id => id !== fromSkinId);
     if (win) newInventory.push(toSkinId);
 
     db.prepare('UPDATE users SET inventory = ? WHERE telegram_id = ?')
         .run(JSON.stringify(newInventory), userId);
 
-    // Угол остановки стрелки
     const stopAngle = win
         ? Math.random() * chance * 360
         : chance * 360 + Math.random() * (1 - chance) * 360;
@@ -103,6 +101,6 @@ app.post('/api/upgrade', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Сервер запущен на порту ${PORT}`);
 });
