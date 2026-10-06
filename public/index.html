@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+лл<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -8,104 +8,184 @@
         * { box-sizing: border-box; }
         body {
             font-family: -apple-system, sans-serif;
-            padding: 16px;
+            padding: 12px;
             background: #1a1a2e;
             color: white;
-            text-align: center;
             margin: 0;
             min-height: 100vh;
         }
         .balance {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             background: #0f3460;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-        .skins {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-        .skin-card {
-            flex: 1;
-            background: #0f3460;
-            border: 2px solid #16213e;
-            border-radius: 12px;
-            padding: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .skin-card.selected {
-            border-color: #e94560;
-            box-shadow: 0 0 16px #e94560;
-        }
-        .skin-card img {
-            width: 100%;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            background: #16213e;
-        }
-        .skin-card p {
-            margin: 6px 0 0;
-            font-size: 12px;
-        }
-        .price { color: #f4d35e; font-size: 11px; }
-        input[type=number] {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
+            padding: 10px;
+            border-radius: 10px;
             margin-bottom: 12px;
             text-align: center;
         }
-        button {
+        .main {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+        .column {
+            flex: 1;
+            min-width: 0;
+        }
+        .column h3 {
+            font-size: 13px;
+            color: #aaa;
+            margin: 0 0 6px;
+            text-align: center;
+        }
+        .skins-list {
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .skin-item {
+            background: #0f3460;
+            border: 2px solid #16213e;
+            border-radius: 8px;
+            padding: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.15s;
+        }
+        .skin-item.selected {
+            border-color: #e94560;
+            box-shadow: 0 0 10px #e94560;
+        }
+        .skin-item img {
+            width: 44px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 4px;
+            background: #16213e;
+            flex-shrink: 0;
+        }
+        .skin-item-info {
+            min-width: 0;
+            flex: 1;
+        }
+        .skin-item-name {
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .skin-item-price {
+            font-size: 10px;
+            color: #f4d35e;
+        }
+        .center-block {
+            flex: 1.2;
+            text-align: center;
+        }
+        .wheel-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 200px;
+            margin: 0 auto 10px;
+        }
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        #arrow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 45%;
+            background: #fff;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(0deg);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(255,255,255,0.7);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.16, 1);
+        }
+        #arrow::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 12px solid #fff;
+        }
+        .chance-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 5;
+            pointer-events: none;
+            text-shadow: 0 0 6px #000;
+        }
+        .upgrade-btn {
             width: 100%;
             background: #e94560;
             color: white;
             border: none;
-            padding: 16px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 15px;
+            font-weight: bold;
             cursor: pointer;
-            margin-bottom: 12px;
+            margin-top: 6px;
         }
-        button:disabled { opacity: 0.5; }
-        #result { font-size: 18px; margin-top: 12px; min-height: 24px; }
-        .chance-label { margin: 12px 0 6px; font-size: 14px; color: #aaa; }
+        .upgrade-btn:disabled { opacity: 0.5; }
+        #result {
+            font-size: 14px;
+            margin-top: 8px;
+            min-height: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .empty-msg {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="balance">💰 Баланс: <span id="balance">...</span></div>
 
-    <p class="chance-label">Выбери скин для апгрейда:</p>
-    <div class="skins">
-        <div class="skin-card selected" data-chance="50" data-name="AKR-12 | Дракон">
-            <img src="akr.png" alt="AKR-12">
-            <p>AKR-12 | Дракон</p>
-            <p class="price">Шанс: 50%</p>
+    <div class="main">
+        <div class="column">
+            <h3>Твой инвентарь</h3>
+            <div class="skins-list" id="myInventory"></div>
         </div>
-        <div class="skin-card" data-chance="20" data-name="M4A1 | Вихрь">
-            <img src="m4a1.png" alt="M4A1">
-            <p>M4A1 | Вихрь</p>
-            <p class="price">Шанс: 20%</p>
+
+        <div class="center-block">
+            <div class="wheel-wrap">
+                <canvas id="wheel" width="400" height="400"></canvas>
+                <div id="arrow"></div>
+                <div class="chance-center" id="chanceCenter">—</div>
+            </div>
+            <button class="upgrade-btn" id="upgradeBtn" onclick="doUpgrade()">🚀 Апгрейд</button>
+            <div id="result"></div>
         </div>
-        <div class="skin-card" data-chance="5" data-name="AWM | Феникс">
-            <img src="awm.png" alt="AWM">
-            <p>AWM | Феникс</p>
-            <p class="price">Шанс: 5%</p>
+
+        <div class="column">
+            <h3>Хочу получить</h3>
+            <div class="skins-list" id="allSkins"></div>
         </div>
     </div>
-
-    <p class="chance-label">Ставка:</p>
-    <input type="number" id="bet" value="100" min="10" step="10">
-
-    <button id="upgradeBtn" onclick="doUpgrade()">🚀 Апгрейд</button>
-    <div id="result"></div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -114,72 +194,213 @@
 
         const userId = tg.initDataUnsafe?.user?.id || 'test_user';
         let balance = 0;
-        let selectedChance = 50;
+        let inventory = [];
+        let allSkins = [];
+        let selectedFrom = null;
+        let selectedTo = null;
+        let spinning = false;
 
-        async function loadUser() {
-            try {
-                const res = await fetch(`/api/user/${userId}`);
-                const data = await res.json();
-                balance = data.balance;
-                document.getElementById('balance').textContent = balance;
-            } catch (e) {
-                console.error('Ошибка загрузки:', e);
-                document.getElementById('balance').textContent = 'ошибка';
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const size = canvas.width;
+        const center = size / 2;
+        const radius = center - 6;
+
+        function drawWheel(chancePercent) {
+            ctx.clearRect(0, 0, size, size);
+            const chanceAngle = (chancePercent / 100) * Math.PI * 2;
+
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.arc(center, center, radius, -Math.PI / 2, -Math.PI / 2 + chanceAngle);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(46, 204, 113, 0.35)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(46, 204, 113, 0.9)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.arc(center, center, radius, -Math.PI / 2 + chanceAngle, -Math.PI / 2 + Math.PI * 2);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(233, 69, 96, 0.35)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(233, 69, 96, 0.9)';
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(center, center, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = '#16213e';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+        }
+
+        function calcChance() {
+            if (selectedFrom === null || !selectedTo) return null;
+            const fromSkinId = inventory[selectedFrom];
+            const from = allSkins.find(s => s.id === fromSkinId);
+            const to = allSkins.find(s => s.id === selectedTo);
+            if (!from || !to) return null;
+            let chance = (from.price / to.price) * 0.9;
+            if (chance > 0.95) chance = 0.95;
+            return chance;
+        }
+
+        function updateWheel() {
+            const chance = calcChance();
+            const centerEl = document.getElementById('chanceCenter');
+            if (chance === null) {
+                drawWheel(0);
+                centerEl.textContent = '—';
+            } else {
+                drawWheel(chance * 100);
+                centerEl.textContent = Math.round(chance * 1000) / 10 + '%';
             }
         }
 
-        document.querySelectorAll('.skin-card').forEach(card => {
-            card.addEventListener('click', () => {
-                document.querySelectorAll('.skin-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedChance = parseInt(card.dataset.chance);
+        async function loadAll() {
+            const [userRes, skinsRes] = await Promise.all([
+                fetch(`/api/user/${userId}`),
+                fetch('/api/skins')
+            ]);
+            const userData = await userRes.json();
+            allSkins = await skinsRes.json();
+
+            balance = userData.balance;
+            inventory = userData.inventory;
+            document.getElementById('balance').textContent = balance;
+
+            renderInventory();
+            renderAllSkins();
+            updateWheel();
+        }
+
+        function renderInventory() {
+            const box = document.getElementById('myInventory');
+            box.innerHTML = '';
+            if (inventory.length === 0) {
+                box.innerHTML = '<div class="empty-msg">Пусто</div>';
+                return;
+            }
+            inventory.forEach((id, idx) => {
+                const skin = allSkins.find(s => s.id === id);
+                if (!skin) return;
+                const el = document.createElement('div');
+                el.className = 'skin-item' + (selectedFrom === idx ? ' selected' : '');
+                el.innerHTML = `
+                    <img src="${skin.img}" alt="${skin.name}">
+                    <div class="skin-item-info">
+                        <div class="skin-item-name">${skin.name}</div>
+                        <div class="skin-item-price">${skin.price} 💰</div>
+                    </div>
+                `;
+                el.onclick = () => {
+                    if (spinning) return;
+                    selectedFrom = idx;
+                    renderInventory();
+                    updateWheel();
+                };
+                box.appendChild(el);
             });
-        });
+        }
+
+        function renderAllSkins() {
+            const box = document.getElementById('allSkins');
+            box.innerHTML = '';
+            allSkins.forEach(skin => {
+                const el = document.createElement('div');
+                el.className = 'skin-item' + (selectedTo === skin.id ? ' selected' : '');
+                el.innerHTML = `
+                    <img src="${skin.img}" alt="${skin.name}">
+                    <div class="skin-item-info">
+                        <div class="skin-item-name">${skin.name}</div>
+                        <div class="skin-item-price">${skin.price} 💰</div>
+                    </div>
+                `;
+                el.onclick = () => {
+                    if (spinning) return;
+                    selectedTo = skin.id;
+                    renderAllSkins();
+                    updateWheel();
+                };
+                box.appendChild(el);
+            });
+        }
 
         async function doUpgrade() {
-            const bet = parseInt(document.getElementById('bet').value);
+            if (spinning) return;
             const resultEl = document.getElementById('result');
             const btn = document.getElementById('upgradeBtn');
 
-            if (bet < 10) {
-                resultEl.innerHTML = '⚠️ Минимальная ставка 10';
+            if (selectedFrom === null) {
+                resultEl.textContent = '⚠️ Выбери свой скин';
+                resultEl.style.color = '#f4d35e';
                 return;
             }
-            if (bet > balance) {
-                resultEl.innerHTML = '⚠️ Недостаточно монет';
+            if (!selectedTo) {
+                resultEl.textContent = '⚠️ Выбери желаемый скин';
+                resultEl.style.color = '#f4d35e';
                 return;
             }
 
+            const fromSkinId = inventory[selectedFrom];
+            spinning = true;
             btn.disabled = true;
-            resultEl.innerHTML = '🎲 Крутим...';
+            resultEl.textContent = '🎲 Крутим...';
+            resultEl.style.color = '#fff';
 
+            let data;
             try {
                 const res = await fetch('/api/upgrade', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, bet, chance: selectedChance })
+                    body: JSON.stringify({ userId, fromSkinId, toSkinId: selectedTo })
                 });
-                const data = await res.json();
-
+                data = await res.json();
                 if (data.error) {
-                    resultEl.innerHTML = '⚠️ ' + data.error;
-                } else if (data.win) {
-                    resultEl.innerHTML = `🎉 УСПЕХ! +${data.winAmount} монет`;
-                } else {
-                    resultEl.innerHTML = `💀 ПРОВАЛ... −${bet} монет`;
+                    resultEl.textContent = '⚠️ ' + data.error;
+                    resultEl.style.color = '#e94560';
+                    spinning = false;
+                    btn.disabled = false;
+                    return;
                 }
-
-                balance = data.newBalance;
-                document.getElementById('balance').textContent = balance;
             } catch (e) {
-                resultEl.innerHTML = '⚠️ Ошибка соединения';
-                console.error(e);
-            } finally {
+                resultEl.textContent = '⚠️ Ошибка соединения';
+                resultEl.style.color = '#e94560';
+                spinning = false;
                 btn.disabled = false;
+                return;
             }
+
+            const targetAngle = data.stopAngle;
+            const fullTurns = 5;
+            const arrow = document.getElementById('arrow');
+            const current = parseFloat(arrow.dataset.rotation || '0');
+            const newRotation = current + fullTurns * 360 + (targetAngle - (current % 360) + 360) % 360;
+            arrow.dataset.rotation = newRotation;
+            arrow.style.transform = `translate(-50%, -100%) rotate(${newRotation}deg)`;
+
+            setTimeout(() => {
+                if (data.win) {
+                    resultEl.textContent = `🎉 УСПЕХ! Получен ${data.toSkin.name}`;
+                    resultEl.style.color = '#2ecc71';
+                } else {
+                    resultEl.textContent = `💀 ПРОВАЛ... ${data.fromSkin.name} сгорел`;
+                    resultEl.style.color = '#e94560';
+                }
+                inventory = data.newInventory;
+                selectedFrom = null;
+                selectedTo = null;
+                renderInventory();
+                renderAllSkins();
+                updateWheel();
+                spinning = false;
+                btn.disabled = false;
+            }, 4100);
         }
 
-        loadUser();
+        loadAll();
     </script>
 </body>
 </html>
